@@ -46,8 +46,9 @@ with HTTPpostclient {
   override def run(): Unit = {
     try {
       //      val out = new DataOutputStream(socket.getOutputStream());
-      val in = new ObjectInputStream(
-        new DataInputStream(socket.getInputStream()));
+      val in = 
+//        new ObjectInputStream(
+        new DataInputStream(socket.getInputStream())
 
       while (true) {
         val line = in.readLine() // TODO use BufferedReader
