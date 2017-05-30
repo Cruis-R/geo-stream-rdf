@@ -12,9 +12,6 @@ case class RawData(
     s"IMEI found in tcpdump {$imei with timetracked: $timetracked, $longitude $latitude"
 
   /**
-   * typical input line:
-   * 2017-05-16 14:33:02,032 - traffic_parser - INFO - IMEI tracked : IMEI: 863977030761766, msisdn: +33607357711, timetracked: 123250.000, datetracked: 160517, latitude: 4850.2417, longitude: 00220.0349
-   * 
    * En JSON-LD avec un @context hébergé sur le Web:
    {
      "@context": "https://deductions.github.io/drivers.context.jsonld",
@@ -26,8 +23,7 @@ case class RawData(
   def toJSON_LD(): String = {
     /* 114715.000 signifie l'heure du tracking 11H47:15
      * 
-     * msisdn: +33607357711, timetracked: 123250.000, datetracked: 160517,
-     * latitude: 4850.2417, longitude: 00220.0349 */
+     *  */
     s"""{
      "@context": "https://deductions.github.io/drivers.context.jsonld",
      "@id": "imei:$imei",
