@@ -16,7 +16,7 @@ case class RawData(
     ) {
 
   override def toString() =
-    s"IMEI found $imei with timetracked: $timetracked, coords $longitude $latitude, batteryStatus $batteryStatus"
+    s"IMEI found $imei with timetracked: $timetracked, coords $longitude $latitude, batteryStatus $batteryStatus, speed $speedNauticalMiles"
 
   /**
    * En JSON-LD avec un @context hébergé sur le Web:

@@ -105,10 +105,13 @@ with HTTPpostclient {
           satelliteCount, altitude, batteryStatus, chargingStatus
         )
         logger.println(s"rawData : $rawData")
+        logger.println(s"${rawData.toJSON_LD()}")
         Some(rawData)
     } catch {
     case t: Throwable =>
-      println(s"${t.getLocalizedMessage}")
+      println(s"""EEE
+        ${t.getLocalizedMessage}
+      EEE""")
       None
     }
   }
