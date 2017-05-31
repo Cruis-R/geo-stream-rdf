@@ -15,7 +15,8 @@ case class RawData(
     val chargingStatus: String
     ) {
 
-  override def toString() =
+//  override def toString() =
+  def toString2() =
     s"IMEI found $imei with timetracked: $timetracked, coords $longitude $latitude, batteryStatus $batteryStatus, speed $speedNauticalMiles"
 
   /**
@@ -56,11 +57,14 @@ case class RawData(
     degree + minutes / 60
   }
 
+  /** compute data in XML Schema format */
   def date = {
-    val time = s"${timetracked.slice(0, 1)}:${timetracked.slice(2, 3)}:${timetracked.slice(4, 5)}"
-    val day   = datetracked.slice(0, 1)
-    val month = datetracked.slice(2, 3)
-    val year  = datetracked.slice(3, 4)
+//    println( s"timetracked $timetracked, datetracked $datetracked")
+    val time = s"${timetracked.slice(0, 2)}:${timetracked.slice(2, 4)}:${timetracked.slice(4, 10)}"
+    val day   = datetracked.slice(0, 2)
+    val month = datetracked.slice(2, 4)
+    val year  = datetracked.slice(4, 6)
+//    println( s"day $day, month $month, year $year")
     val date = s"20${year}-${month}-${day}"
     s"${date}T${time}"
   }
