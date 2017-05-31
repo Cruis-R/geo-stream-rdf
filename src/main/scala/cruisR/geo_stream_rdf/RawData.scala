@@ -41,14 +41,18 @@ case class RawData(
   }
   
   def latitudeDecimalDegree = {
-    val degree = latitude.slice(0, 1) . toInt
+//    println( s"latitude $latitude")
+    val degree = latitude.slice(0, 2) . toInt
     val minutes = latitude.slice(2,100) . toFloat
+//    println( s"degree $degree, minutes $minutes")
     degree + minutes / 60
   }
 
   def longitudeDecimalDegree = {
-    val degree = latitude.slice(0, 2) . toInt
-    val minutes = latitude.slice(4,100) . toFloat
+//    println( s"longitude $longitude")
+    val degree = longitude.slice(0, 3) . toInt
+    val minutes = longitude.slice(3,100) . toFloat
+//    println( s"degree $degree, minutes $minutes")
     degree + minutes / 60
   }
 

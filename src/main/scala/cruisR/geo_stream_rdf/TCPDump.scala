@@ -46,7 +46,7 @@ with HTTPpostclient {
           case Some(data) =>
             // send the RDF (JSON-LD) to RDF REST server)
             send(data.toJSON_LD)          
-          case _ => println("regex not matching")
+          case _ => println("HTTPpostclient: regex not matching")
         }
         Thread.sleep(100)
       }
@@ -82,11 +82,11 @@ with HTTPpostclient {
    */
   def regex_on_tcpdump(line: String): Option[RawData] = {
     try {
-      println(s"$line")
+      println(s"""'$line'""")
       val regex(
           timestamp,phoneNumber,time,xx,
-          longitudeString,eastWest,
           latitudeString,northSouth,
+          longitudeString,eastWest,
           speedNauticalMiles,angle,date,
           validGPSsignal, imei,
           satelliteCount, altitude, batteryStatus, chargingStatus,
@@ -111,8 +111,14 @@ with HTTPpostclient {
     case t: Throwable =>
       println(s"""EEE
         ${t.getLocalizedMessage}
+        line: $line
       EEE""")
       None
     }
   }
+}
+
+object PArseTest extends ServerThread(null) with App {
+  val line = args(0)
+  regex_on_tcpdump(line)
 }
