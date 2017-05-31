@@ -82,6 +82,7 @@ with HTTPpostclient {
    */
   def regex_on_tcpdump(line: String): Option[RawData] = {
     try {
+      println(s"$line")
       val regex(
           timestamp,phoneNumber,time,xx,
           longitudeString,eastWest,
@@ -103,11 +104,11 @@ with HTTPpostclient {
           angle = angle,
           satelliteCount, altitude, batteryStatus, chargingStatus
         )
-        logger.println(rawData)
+        logger.println(s"rawData : $rawData")
         Some(rawData)
     } catch {
     case t: Throwable =>
-      println(s"t.getLocalizedMessage // $line")
+      println(s"${t.getLocalizedMessage}")
       None
     }
   }
