@@ -6,7 +6,10 @@ case class RawData(
     val latitude: String,
     val longitude: String,
     val datetracked: String,
-    val imei: String) {
+    val imei: String,
+    val speedNauticalMiles: String,
+    val angle: String
+    ) {
 
   override def toString() =
     s"IMEI found in tcpdump {$imei with timetracked: $timetracked, $longitude $latitude"

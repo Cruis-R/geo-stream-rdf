@@ -71,34 +71,38 @@ with HTTPpostclient {
    * typical input line:
    * 170524170838,+33689162952,GPRMC,160838.000,A,4850.2382,N,00220.0353,E,000.0,000.0,240517,,,A*68,L,, imei:863977030715952,06,76.8,F:4.14V,1,139,4305,208,01,0300,4679
    */
-//  val regex = s"$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,.*" r
-  val regex = s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,.*""" r
- 
+//    s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,.*""" r
+  val regex =
+    s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,,,....,$LETTER,, imei:$INTEGER,.*""" r
+
   /**
    * Parsing tcpdump and building ImeiTracking objects.
    * time must match utctime of the elapsed minute ?
    */
   def regex_on_tcpdump(line: String): Option[RawData] = {
     try {
-      
       val regex(
           timestamp,phoneNumber,time,xx,
           longitudeString,eastWest,
           latitudeString,northSouth,
-          speedNauticalMiles,angle,date) = line
-//      val bim = regex.split(line)
-//      println(s"size ${bim.size}")
-//      if (bim.size > 8) {
+          speedNauticalMiles,angle,date,
+          validGPSsignal, imei) = line
         val rawData = RawData(
           msisdn = timestamp,
           timetracked = time,
           latitude = latitudeString,
           longitude = longitudeString,
           datetracked = date,
-          imei = "???")
+          imei = imei,
+          speedNauticalMiles,
+          angle)
         logger.println(rawData)
         Some(rawData)
 //      } else None
+    } catch {
+    case t: Throwable =>
+      println(s"t.getLocalizedMessage // $line")
+      None
     }
   }
 }
