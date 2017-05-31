@@ -8,7 +8,11 @@ case class RawData(
     val datetracked: String,
     val imei: String,
     val speedNauticalMiles: String,
-    val angle: String
+    val angle: String,
+    val satelliteCount: String,
+    val altitude: String,
+    val batteryStatus: String,
+    val chargingStatus: String
     ) {
 
   override def toString() =

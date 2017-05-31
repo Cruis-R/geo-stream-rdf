@@ -26,11 +26,6 @@ object TCPDump {
 case class ServerThread(socket: Socket)
 extends Thread("ServerThread")
 with HTTPpostclient {
-  val DECIMAL = """(\d+\.\d+)"""
-  val INTEGER = """(\d+)"""
-  val PLUSINTEGER = """(\+\d+)"""
-  val LETTER = """(\w)"""
-  val DOT="""\."""
 
   val regexold =
     """(\+\d+)(,)(GPRMC,)(\d+\.\d+),\w,(\d+\.\d+),\w,(\d+\.\d+)(.*)(\d{6})(.*)(imei:)(\d+)""" r
@@ -66,6 +61,12 @@ with HTTPpostclient {
     }
   }
 
+  val DECIMAL = """(\d+\.\d+)"""
+  val INTEGER = """(\d+)"""
+  val PLUSINTEGER = """(\+\d+)"""
+  val LETTER = """(\w)"""
+  val DOT="""\."""
+  val BATTERY = """(\w:\d+\.\d+V)""" // “F:4.11V” full battery, “L:3.65V” low battery
   /**
    * regex getting relevant information from the tcpdump
    * typical input line:
@@ -73,7 +74,7 @@ with HTTPpostclient {
    */
 //    s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,.*""" r
   val regex =
-    s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,,,....,$LETTER,, imei:$INTEGER,.*""" r
+    s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,,,....,$LETTER,, imei:$INTEGER,$INTEGER,$DECIMAL,$BATTERY,$INTEGER,$INTEGER,(.*)""" r
 
   /**
    * Parsing tcpdump and building ImeiTracking objects.
@@ -86,7 +87,11 @@ with HTTPpostclient {
           longitudeString,eastWest,
           latitudeString,northSouth,
           speedNauticalMiles,angle,date,
-          validGPSsignal, imei) = line
+          validGPSsignal, imei,
+          satelliteCount, altitude, batteryStatus, chargingStatus,
+          gpsLen, endOfLine // crc16, mcc, mnc, lac, cellID
+          ) = line
+
         val rawData = RawData(
           msisdn = timestamp,
           timetracked = time,
@@ -94,11 +99,12 @@ with HTTPpostclient {
           longitude = longitudeString,
           datetracked = date,
           imei = imei,
-          speedNauticalMiles,
-          angle)
+          speedNauticalMiles = speedNauticalMiles,
+          angle = angle,
+          satelliteCount, altitude, batteryStatus, chargingStatus
+        )
         logger.println(rawData)
         Some(rawData)
-//      } else None
     } catch {
     case t: Throwable =>
       println(s"t.getLocalizedMessage // $line")
