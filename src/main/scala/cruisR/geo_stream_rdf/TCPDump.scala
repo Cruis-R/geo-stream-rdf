@@ -31,7 +31,7 @@ with HTTPpostclient {
     """(\+\d+)(,)(GPRMC,)(\d+\.\d+),\w,(\d+\.\d+),\w,(\d+\.\d+)(.*)(\d{6})(.*)(imei:)(\d+)""" r
   val logger = System.out
   
-  val dataReceivingServerUrl = "http://semantic-forms.cc:9000/position"
+  val dataReceivingServerUrl = "" // http://semantic-forms.cc:9000/position"
   
   override def run(): Unit = {
     try {
