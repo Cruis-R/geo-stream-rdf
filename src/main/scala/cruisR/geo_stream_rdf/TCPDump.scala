@@ -14,6 +14,7 @@ object TCPDump {
     try {
       val listener = new ServerSocket(9999)
       while (true) {
+        println("TCPDump: Starting top level loop")
         val runner = new ServerThread(listener.accept()) {
           override val dataReceivingServerUrl = "http://semantic-forms.cc:9000/load"
         }
@@ -37,8 +38,10 @@ with HTTPpostclient {
   val regexold =
     """(\+\d+)(,)(GPRMC,)(\d+\.\d+),\w,(\d+\.\d+),\w,(\d+\.\d+)(.*)(\d{6})(.*)(imei:)(\d+)""" r
   val logger = System.out
-  val logger2 = new PrintStream("geo.csv")
-  
+
+  // append and autoflush
+  val logger2 = new PrintStream(new FileOutputStream("geo.csv", true), true)
+
   override def run(): Unit = {
     try {
       //      val out = new DataOutputStream(socket.getOutputStream());
@@ -61,8 +64,8 @@ with HTTPpostclient {
       logger2.close()
     } catch {
       case e: SocketException =>
-        println(e.getLocalizedMessage)
-        () // avoid stack trace when stopping a client with Ctrl-C
+        println("SocketException " + e.getLocalizedMessage)
+        // avoid stack trace when stopping a client with Ctrl-C
       case e: IOException =>
         e.printStackTrace();
     }
