@@ -68,10 +68,4 @@ case class RawData(
     val date = s"20${year}-${month}-${day}"
     s"${date}T${time}"
   }
-
-  def toCSV() = productIterator.map {
-    case Some(value) => value
-    case None        => ""
-    case rest        => rest
-  }.mkString(",")
 }

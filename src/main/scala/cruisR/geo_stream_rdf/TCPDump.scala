@@ -112,7 +112,7 @@ with HTTPpostclient {
         )
         logger.println(s"rawData : $rawData")
 //        logger.println(s"${rawData.toJSON_LD()}")
-        logger2.println(rawData.toCSV())
+        logger2.println(new ProcessedData(rawData).toCSV())
 
         Some(rawData)
     } catch {
