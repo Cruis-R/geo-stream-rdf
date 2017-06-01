@@ -1,7 +1,10 @@
 package cruisR.geo_stream_rdf
 
 import java.io._
-import java.net.{ InetAddress, ServerSocket, Socket, SocketException }
+import java.net.{
+  ServerSocket,
+  Socket,
+  SocketException }
 
 /**
  * Simple client/server application using Java sockets.
@@ -93,12 +96,13 @@ with HTTPpostclient {
    */
   def regex_on_tcpdump(line: String): Option[RawData] = {
     try {
-      println(s"""'$line'""")
-      val regex(
-          timestamp,phoneNumber,time,xx,
-          latitudeString,northSouth,
-          longitudeString,eastWest,
-          speedNauticalMiles,angle,date,
+      if (line != "") {
+        println(s"""'$line'""")
+        val regex(
+          timestamp, phoneNumber, time, xx,
+          latitudeString, northSouth,
+          longitudeString, eastWest,
+          speedNauticalMiles, angle, date,
           validGPSsignal, imei,
           satelliteCount, altitude, batteryStatus, chargingStatus,
           gpsLen, endOfLine // crc16, mcc, mnc, lac, cellID
@@ -113,20 +117,21 @@ with HTTPpostclient {
           imei = imei,
           speedNauticalMiles = speedNauticalMiles,
           angle = angle,
-          satelliteCount, altitude, batteryStatus, chargingStatus
-        )
+          satelliteCount, altitude, batteryStatus, chargingStatus)
         logger.println(s"rawData : $rawData")
-//        logger.println(s"${rawData.toJSON_LD()}")
+        //        logger.println(s"${rawData.toJSON_LD()}")
         logger2.println(new ProcessedData(rawData).toCSV())
 
         Some(rawData)
+      } else
+        None
     } catch {
-    case t: Throwable =>
-      println(s"""EEE
+      case t: Throwable =>
+        println(s"""EEE
         ${t.getLocalizedMessage}
         line: $line
       EEE""")
-      None
+        None
     }
   }
 }
