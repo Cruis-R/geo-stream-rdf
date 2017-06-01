@@ -82,7 +82,7 @@ with HTTPpostclient {
   val DOT="""\."""
   val BATTERY = """(\w:\d+\.\d+V)""" // “F:4.11V” full battery, “L:3.65V” low battery
 //  val WORD_OR_NOT = """(\w*)"""
-  val WORD_OR_NOT = """(battery|SHAKE|shake|move|ACC on|ACC OFF|speed|stockade|low batt|help)"""
+  val WORD_OR_NOT = """(|battery|SHAKE|shake|move|ACC on|ACC OFF|speed|stockade|low batt|help)"""
 
   /**
    * regex getting relevant information from the tcpdump
