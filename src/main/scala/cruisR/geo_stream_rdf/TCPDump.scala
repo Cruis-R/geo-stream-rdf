@@ -13,15 +13,14 @@ object TCPDump {
 
     try {
       val listener = new ServerSocket(9999)
-      val runner = new ServerThread(listener.accept()) {
-        override val dataReceivingServerUrl = "http://semantic-forms.cc:9000/load"
-      }
-      while (true)
-        // TODO take in account control-C
+      while (true) {
+        val runner = new ServerThread(listener.accept()) {
+          override val dataReceivingServerUrl = "http://semantic-forms.cc:9000/load"
+        }
         runner.start()
+      }
 
       listener.close()
-      runner.logger2.close()
     } catch {
       case e: IOException =>
         System.err.println("Could not listen on port: 9999.");
@@ -59,12 +58,15 @@ with HTTPpostclient {
       //      out.close();
       in.close();
       socket.close()
+      logger2.close()
     } catch {
       case e: SocketException =>
+        println(e.getLocalizedMessage)
         () // avoid stack trace when stopping a client with Ctrl-C
       case e: IOException =>
         e.printStackTrace();
     }
+    logger2.close()
   }
 
   val DECIMAL = """(\d+\.\d+)"""
