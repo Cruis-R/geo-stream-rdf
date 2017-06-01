@@ -9,7 +9,8 @@ case class ProcessedData(
     val chargingStatus: String,
     val speedNauticalMiles: String,
     val angle: String,
-    val altitude: String) {
+    val altitude: String,
+    val eventType: String) {
 
   def this(rawData: RawData) = 
     this(
@@ -21,7 +22,8 @@ case class ProcessedData(
       rawData.chargingStatus,
       rawData.speedNauticalMiles,
       rawData.angle,
-      rawData.altitude)
+      rawData.altitude,
+      rawData.eventType)
 
   def toCSV() = productIterator.map {
     case Some(value) => value

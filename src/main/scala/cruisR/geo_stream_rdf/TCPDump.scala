@@ -120,10 +120,14 @@ with HTTPpostclient {
           imei = imei,
           speedNauticalMiles = speedNauticalMiles,
           angle = angle,
-          satelliteCount, altitude, batteryStatus, chargingStatus)
-        logger.println(s"rawData : $rawData")
-        //        logger.println(s"${rawData.toJSON_LD()}")
-        logger2.println(new ProcessedData(rawData).toCSV())
+          satelliteCount, altitude, batteryStatus,
+          chargingStatus, eventType)
+          
+        val csv = new ProcessedData(rawData).toCSV()
+        logger.println(s"csv $csv")
+//      logger.println(s"rawData : $rawData")
+        // logger.println(s"${rawData.toJSON_LD()}")
+        logger2.println(csv)
 
         Some(rawData)
       } else

@@ -12,7 +12,8 @@ case class RawData(
     val satelliteCount: String,
     val altitude: String,
     val batteryStatus: String,
-    val chargingStatus: String
+    val chargingStatus: String,
+    val eventType: String
     ) {
 
 //  override def toString() =
