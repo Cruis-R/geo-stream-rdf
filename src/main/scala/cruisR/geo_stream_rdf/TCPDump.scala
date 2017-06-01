@@ -81,6 +81,9 @@ with HTTPpostclient {
   val LETTER = """(\w)"""
   val DOT="""\."""
   val BATTERY = """(\w:\d+\.\d+V)""" // “F:4.11V” full battery, “L:3.65V” low battery
+//  val WORD_OR_NOT = """(\w*)"""
+  val WORD_OR_NOT = """(battery|SHAKE|shake|move|ACC on|ACC OFF|speed|stockade|low batt|help)"""
+
   /**
    * regex getting relevant information from the tcpdump
    * typical input line:
@@ -88,7 +91,7 @@ with HTTPpostclient {
    */
 //    s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,.*""" r
   val regex =
-    s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,,,....,$LETTER,, imei:$INTEGER,$INTEGER,$DECIMAL,$BATTERY,$INTEGER,$INTEGER,(.*)""" r
+    s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,,,....,$LETTER,$WORD_OR_NOT, imei:$INTEGER,$INTEGER,$DECIMAL,$BATTERY,$INTEGER,(.*)""" r
 
   /**
    * Parsing tcpdump and building ImeiTracking objects.
@@ -96,16 +99,16 @@ with HTTPpostclient {
    */
   def regex_on_tcpdump(line: String): Option[RawData] = {
     try {
-      if (line != "") {
+      if (line != "" && line != "null" ) {
         println(s"""'$line'""")
         val regex(
           timestamp, phoneNumber, time, xx,
           latitudeString, northSouth,
           longitudeString, eastWest,
           speedNauticalMiles, angle, date,
-          validGPSsignal, imei,
+          validGPSsignal, eventType, imei,
           satelliteCount, altitude, batteryStatus, chargingStatus,
-          gpsLen, endOfLine // crc16, mcc, mnc, lac, cellID
+          endOfLine // gpsLen, crc16, mcc, mnc, lac, cellID
           ) = line
 
         val rawData = RawData(
