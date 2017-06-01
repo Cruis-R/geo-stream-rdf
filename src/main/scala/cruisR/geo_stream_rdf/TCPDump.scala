@@ -46,11 +46,10 @@ with HTTPpostclient {
   val logger2 = new PrintStream(new FileOutputStream("geo.csv", true), true)
 
   override def run(): Unit = {
+		val in = 
+      new DataInputStream(socket.getInputStream())
     try {
       //      val out = new DataOutputStream(socket.getOutputStream());
-      val in = 
-        new DataInputStream(socket.getInputStream())
-
       while (true) {
         val line = in.readLine() // TODO use BufferedReader
         regex_on_tcpdump(line) match {
@@ -62,17 +61,18 @@ with HTTPpostclient {
         Thread.sleep(100)
       }
       //      out.close();
-      in.close();
-      socket.close()
-      logger2.close()
     } catch {
       case e: SocketException =>
         println("SocketException " + e.getLocalizedMessage)
         // avoid stack trace when stopping a client with Ctrl-C
       case e: IOException =>
         e.printStackTrace();
+    } finally {
+            //      out.close();
+      in.close()
+      socket.close()
+      logger2.close()
     }
-    logger2.close()
   }
 
   val DECIMAL = """(\d+\.\d+)"""
