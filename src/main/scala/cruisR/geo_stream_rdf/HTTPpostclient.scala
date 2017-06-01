@@ -16,9 +16,11 @@ trait HTTPpostclient {
 
   def send(content: String) = {
 
-    if (dataReceivingServerUrl != "") {
+    if (dataReceivingServerUrl != "" &&
+        content != "") {
 
       val post = new HttpPost(dataReceivingServerUrl)
+      post.addHeader("Content-Type","application/ld+json")      
       //    post.addHeader("appid","YahooDemo")
       //    post.addHeader("query","umbrella")
       //    post.addHeader("results","10")

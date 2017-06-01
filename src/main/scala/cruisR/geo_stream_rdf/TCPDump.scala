@@ -10,11 +10,18 @@ import java.net.{ InetAddress, ServerSocket, Socket, SocketException }
 object TCPDump {
 
   def main(args: Array[String]): Unit = {
+
     try {
-      val listener = new ServerSocket(9999);
+      val listener = new ServerSocket(9999)
+      val runner = new ServerThread(listener.accept()) {
+        override val dataReceivingServerUrl = "http://semantic-forms.cc:9000/load"
+      }
       while (true)
-        new ServerThread(listener.accept()).start();
+        // TODO take in account control-C
+        runner.start()
+
       listener.close()
+      runner.logger2.close()
     } catch {
       case e: IOException =>
         System.err.println("Could not listen on port: 9999.");
@@ -23,15 +30,15 @@ object TCPDump {
   }
 }
 
-case class ServerThread(socket: Socket)
+abstract case class ServerThread(socket: Socket)
 extends Thread("ServerThread")
 with HTTPpostclient {
-
+  val dataReceivingServerUrl = ""
+  
   val regexold =
     """(\+\d+)(,)(GPRMC,)(\d+\.\d+),\w,(\d+\.\d+),\w,(\d+\.\d+)(.*)(\d{6})(.*)(imei:)(\d+)""" r
   val logger = System.out
-  
-  val dataReceivingServerUrl = "" // http://semantic-forms.cc:9000/position"
+  val logger2 = new PrintStream("geo.csv")
   
   override def run(): Unit = {
     try {
@@ -41,7 +48,6 @@ with HTTPpostclient {
 
       while (true) {
         val line = in.readLine() // TODO use BufferedReader
-        println(line)
         regex_on_tcpdump(line) match {
           case Some(data) =>
             // send the RDF (JSON-LD) to RDF REST server)
@@ -105,7 +111,9 @@ with HTTPpostclient {
           satelliteCount, altitude, batteryStatus, chargingStatus
         )
         logger.println(s"rawData : $rawData")
-        logger.println(s"${rawData.toJSON_LD()}")
+//        logger.println(s"${rawData.toJSON_LD()}")
+        logger2.println(rawData.toCSV())
+
         Some(rawData)
     } catch {
     case t: Throwable =>
