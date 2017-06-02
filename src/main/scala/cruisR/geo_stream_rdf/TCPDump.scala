@@ -5,6 +5,8 @@ import java.net.{
   ServerSocket,
   Socket,
   SocketException }
+import scala.collection._ // mutable._
+
 
 /**
  * Simple client/server application using Java sockets.
@@ -34,14 +36,13 @@ object TCPDump {
 }
 
 abstract case class ServerThread(socket: Socket)
-extends Thread("ServerThread")
-with HTTPpostclient {
-  val dataReceivingServerUrl = ""
-  
-  val regexold =
-    """(\+\d+)(,)(GPRMC,)(\d+\.\d+),\w,(\d+\.\d+),\w,(\d+\.\d+)(.*)(\d{6})(.*)(imei:)(\d+)""" r
-  val logger = System.out
+    extends Thread("ServerThread")
+    with HTTPpostclient {
 
+  val dataReceivingServerUrl = ""
+  val precedingPoints = mutable.Map[String, RawData]()
+  
+  val logger = System.out
   // append and autoflush
   val logger2 = new PrintStream(new FileOutputStream("geo.csv", true), true)
 
@@ -82,7 +83,7 @@ with HTTPpostclient {
   val DOT="""\."""
   val BATTERY = """(\w:\d+\.\d+V)""" // “F:4.11V” full battery, “L:3.65V” low battery
 //  val WORD_OR_NOT = """(\w*)"""
-  val WORD_OR_NOT = """(|battery|SHAKE|shake|move|ACC on|ACC OFF|speed|stockade|low batt|help)"""
+  val WORD_OR_NOT = """(|battery|SHAKE|shake|move|ACC on|ACC OFF|speed|stockade|low batt|Low batt|help)"""
 
   /**
    * regex getting relevant information from the tcpdump
@@ -99,7 +100,7 @@ with HTTPpostclient {
    */
   def regex_on_tcpdump(line: String): Option[RawData] = {
     try {
-      if (line != "" && line != "null" ) {
+      if (line != "" && line != "null" && line != null) {
         println(s"""'$line'""")
         val regex(
           timestamp, phoneNumber, time, xx,
@@ -122,14 +123,23 @@ with HTTPpostclient {
           angle = angle,
           satelliteCount, altitude, batteryStatus,
           chargingStatus, eventType)
-          
-        val csv = new ProcessedData(rawData).toCSV()
-        logger.println(s"csv $csv")
-//      logger.println(s"rawData : $rawData")
-        // logger.println(s"${rawData.toJSON_LD()}")
-        logger2.println(csv)
+         
+        val preceding = precedingPoints(imei)
+        // TODO compare on all fields but not timetracked
+        if (preceding != rawData) {
+          precedingPoints(imei) = rawData
 
-        Some(rawData)
+          val csv = new ProcessedData(rawData).toCSV()
+          logger.println(s"csv $csv")
+          //      logger.println(s"rawData : $rawData")
+          // logger.println(s"${rawData.toJSON_LD()}")
+          logger2.println(csv)
+
+          Some(rawData)
+        } else {
+          logger.println(s"For imei $imei NO CHANGE")
+          None
+        }
       } else
         None
     } catch {
