@@ -57,7 +57,7 @@ abstract case class ServerThread(socket: Socket)
           case Some(data) =>
             // send the RDF (JSON-LD) to RDF REST server)
             send(data.toJSON_LD)          
-          case _ => println("HTTPpostclient: regex not matching")
+          case _ => println("HTTPpostclient: regex not matching or line not expected")
         }
         Thread.sleep(100)
       }
@@ -144,10 +144,10 @@ abstract case class ServerThread(socket: Socket)
         None
     } catch {
       case t: Throwable =>
-        println(s"""EEE
-        ${t.getLocalizedMessage}
-        line: $line
-      EEE""")
+        println(s"""|EEE
+        |Error: ${t.getLocalizedMessage}
+        |line: '$line'
+        |EEE""".stripMargin )
         None
     }
   }
