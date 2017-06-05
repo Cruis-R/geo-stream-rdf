@@ -1,14 +1,8 @@
 package cruisR.geo_stream_rdf
 
-import org.apache.commons._
-import org.apache.http._
-import org.apache.http.client._
 import org.apache.http.client.methods.HttpPost
-import org.apache.http.impl.client.DefaultHttpClient
-import java.util.ArrayList
-import org.apache.http.message.BasicNameValuePair
-import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.entity.ByteArrayEntity
+import org.apache.http.impl.client.DefaultHttpClient
 
 trait HTTPpostclient {
 

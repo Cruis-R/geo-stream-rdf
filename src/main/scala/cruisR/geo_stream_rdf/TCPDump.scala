@@ -94,6 +94,8 @@ abstract case class ServerThread(socket: Socket)
   val regex =
     s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,,,....,$LETTER,$WORD_OR_NOT, imei:$INTEGER,$INTEGER,$DECIMAL,$BATTERY,$INTEGER,(.*)""" r
 
+  var beginning = true
+
   /**
    * Parsing tcpdump and building ImeiTracking objects.
    * time must match utctime of the elapsed minute ?
@@ -124,24 +126,24 @@ abstract case class ServerThread(socket: Socket)
           satelliteCount, altitude, batteryStatus,
           chargingStatus, eventType)
          
-        val preceding = precedingPoints(imei)
+        val preceding = precedingPoints.getOrElse(imei, rawData)
+        precedingPoints(imei) = rawData
+
         // TODO compare on all fields but not timetracked
-        if (preceding != rawData) {
-          precedingPoints(imei) = rawData
-
-          val csv = new ProcessedData(rawData).toCSV()
-          logger.println(s"csv $csv")
-          //      logger.println(s"rawData : $rawData")
-          // logger.println(s"${rawData.toJSON_LD()}")
-          logger2.println(csv)
-
-          Some(rawData)
+        if (preceding != rawData || beginning ) {
+            val csv = new ProcessedData(rawData).toCSV()
+            logger.println(s"csv $csv")
+            //      logger.println(s"rawData : $rawData")
+            // logger.println(s"${rawData.toJSON_LD()}")
+            logger2.println(csv)
+            Some(rawData.copy(preceding=Some(preceding)))
         } else {
-          logger.println(s"For imei $imei NO CHANGE")
-          None
+            logger.println(s"For imei $imei NO CHANGE")
+            None
         }
       } else
         None
+
     } catch {
       case t: Throwable =>
         println(s"""|EEE
@@ -149,7 +151,7 @@ abstract case class ServerThread(socket: Socket)
         |line: '$line'
         |EEE""".stripMargin )
         None
-    }
+    } finally beginning = false
   }
 }
 
