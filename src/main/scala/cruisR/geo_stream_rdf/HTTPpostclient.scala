@@ -3,6 +3,7 @@ package cruisR.geo_stream_rdf
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.ByteArrayEntity
 import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.entity.ContentType
 
 trait HTTPpostclient {
 
@@ -28,12 +29,14 @@ trait HTTPpostclient {
       //    nameValuePairs.add(new BasicNameValuePair("accountType", "GOOGLE"));
       //    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-      val entity = new ByteArrayEntity(content.getBytes("UTF-8"))
+      val entity = new ByteArrayEntity(
+          ("data=\n" + content).getBytes("UTF-8"),
+          ContentType.APPLICATION_JSON)
       post.setEntity(entity)
 
       // send the post request
       val response = client.execute(post)
-      println("--- HEADERS ---")
+      println("--- response HEADERS ---")
       response.getAllHeaders.foreach(arg => println(arg))
     }
   }
