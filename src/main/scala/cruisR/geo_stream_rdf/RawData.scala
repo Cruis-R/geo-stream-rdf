@@ -36,7 +36,7 @@ case class RawData(
   def toJSON_LD(): String = {
     s"""{
      "@context": "https://deductions.github.io/drivers.context.jsonld",
-     "@id": $makeURI,
+     "@id": "$makeURI",
      "mobile": "imei:$imei",
      "lat": "$latitudeDecimalDegree",
      "long": "$longitudeDecimalDegree",
@@ -44,7 +44,7 @@ case class RawData(
      ${
       preceding match {
         case Some(rawData) =>
-          s"""", precedingPoint": ${rawData.makeURI}"""
+          s""", "precedingPoint": "${rawData.makeURI}""""
         case _ => ""
       }
     }

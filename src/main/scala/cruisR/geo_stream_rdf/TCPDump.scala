@@ -61,7 +61,8 @@ abstract case class ServerThread(socket: Socket)
         regex_on_tcpdump(line) match {
           case Some(data) =>
             // send the RDF (JSON-LD) to RDF REST server)
-            send(data.toJSON_LD)          
+            send(data.toJSON_LD)
+            println(s"data sent at ${new java.util.Date()}")
           case _ => println("HTTPpostclient: regex not matching or line not expected")
         }
         Thread.sleep(100)
@@ -162,5 +163,9 @@ abstract case class ServerThread(socket: Socket)
 
 object PArseTest extends ServerThread(null) with App {
   val line = args(0)
-  regex_on_tcpdump(line)
+  val dataOption = regex_on_tcpdump(line)
+  dataOption match {
+    case Some(rawData) => println( rawData.toJSON_LD() )
+    case _ =>
+  }
 }
