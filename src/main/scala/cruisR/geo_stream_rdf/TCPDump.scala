@@ -16,12 +16,17 @@ object TCPDump {
 
   def main(args: Array[String]): Unit = {
 
+    val receivingServerUrl = args match {
+      case Array(url) => url
+      case _ => "http://SPARQLGraphStore.org/load"
+    }
+
     try {
       val listener = new ServerSocket(9999)
       while (true) {
         println("TCPDump: Starting top level loop")
         val runner = new ServerThread(listener.accept()) {
-          override val dataReceivingServerUrl = "http://semantic-forms.cc:9000/load"
+          override val dataReceivingServerUrl = receivingServerUrl
         }
         runner.start()
       }
