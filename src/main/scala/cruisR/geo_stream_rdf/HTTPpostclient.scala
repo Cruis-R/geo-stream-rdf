@@ -21,8 +21,8 @@ trait HTTPpostclient {
       //    post.addHeader("results","10")
 
       val client = new DefaultHttpClient
-      //    val params = client.getParams
-      //    params.setParameter("foo", "bar")
+      val params = client.getParams
+      params.setParameter("graph", "data:/points/")
 
       //    val nameValuePairs = new ArrayList[NameValuePair](1)
       //    nameValuePairs.add(new BasicNameValuePair("registrationid", "123456789"));
@@ -30,8 +30,9 @@ trait HTTPpostclient {
       //    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
       val entity = new ByteArrayEntity(
-          ("data=\n" + content).getBytes("UTF-8"),
-          ContentType.APPLICATION_JSON)
+          content.getBytes("UTF-8"),
+            ContentType.create( "application/ld+json", "utf-8" )
+      )
       post.setEntity(entity)
 
       // send the post request
