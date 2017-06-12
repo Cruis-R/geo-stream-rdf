@@ -63,7 +63,7 @@ abstract case class ServerThread(socket: Socket)
             // send the RDF (JSON-LD) to RDF REST server)
             send(data.toJSON_LD)
             println(s"data sent at ${new java.util.Date()}")
-          case _ => println("HTTPpostclient: regex not matching or line not expected")
+          case _ => println(s"HTTPpostclient: regex not matching or line not expected: '$line'")
         }
         Thread.sleep(100)
       }
