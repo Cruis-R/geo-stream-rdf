@@ -63,7 +63,9 @@ abstract case class ServerThread(socket: Socket)
             // send the RDF (JSON-LD) to RDF REST server)
             send(data.toJSON_LD)
             println(s"data sent at ${new java.util.Date()}")
-          case _ => println(s"HTTPpostclient: regex not matching or line not expected: '$line'")
+          case _ =>
+            if (isLineAdmissible(line) )
+              println(s"HTTPpostclient: regex not matching or line not expected: '$line'")
         }
         Thread.sleep(100)
       }
@@ -108,7 +110,7 @@ abstract case class ServerThread(socket: Socket)
    */
   def regex_on_tcpdump(line: String): Option[RawData] = {
     try {
-      if (line != "" && line != "null" && line != null) {
+      if ( isLineAdmissible(line) ) {
         println(s"""'$line'""")
         val regex(
           timestamp, phoneNumber, time, xx,
@@ -159,11 +161,17 @@ abstract case class ServerThread(socket: Socket)
         None
     } finally beginning = false
   }
+
+  private def isLineAdmissible(line: String) = line != "" && line != "null" && line != null
+
 }
 
-object PArseTest extends ServerThread(null) with App {
+object ParseTest extends ServerThread(null) with App {
   val line = args(0)
+  println(s"csv '$line'")
   val dataOption = regex_on_tcpdump(line)
+  println(s"dataOption $dataOption")
+  println(s"ProcessedData ${new ProcessedData(dataOption.get)}")
   dataOption match {
     case Some(rawData) => println( rawData.toJSON_LD() )
     case _ =>
