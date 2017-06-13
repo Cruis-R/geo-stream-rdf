@@ -40,7 +40,9 @@ case class RawData(
      "mobile": "imei:$imei",
      "lat": "$latitudeDecimalDegree",
      "long": "$longitudeDecimalDegree",
-     "date": "$date"
+     "date": "$date",
+     "speed": "$speedKMH",
+     "altitude": "${altitude.toFloat}"
      ${
       preceding match {
         case Some(rawData) =>
@@ -80,4 +82,7 @@ case class RawData(
     val date = s"20${year}-${month}-${day}"
     s"${date}T${time}"
   }
+
+  val speedKMH: Float = speedNauticalMiles.toFloat / 1.852f
+
 }
