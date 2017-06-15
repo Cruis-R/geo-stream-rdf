@@ -35,23 +35,26 @@ case class RawData(
    */
   def toJSON_LD(): String = {
     s"""{
-     "@context": "https://deductions.github.io/drivers.context.jsonld",
-     "@id": "$makeURI",
-     "mobile": "imei:$imei",
-     "lat": "$latitudeDecimalDegree",
-     "long": "$longitudeDecimalDegree",
-     "date": "$date",
-     "speed": "$speedKMH",
-     "altitude": "${altitude.toFloat}",
-     ${if( eventType != "" ) s""" "geoloc:eventType": "$eventType",""" else "" }
-     ${
-      preceding match {
-        case Some(rawData) =>
-          s""", "precedingPoint": "${rawData.makeURI}""""
-        case _ => ""
-      }
-    }
-   }"""
+    "@context": "https://deductions.github.io/drivers.context.jsonld",
+     "@graph": [
+      {
+       "@id": "$makeURI",
+       "mobile": "imei:$imei",
+       "lat": "$latitudeDecimalDegree",
+       "long": "$longitudeDecimalDegree",
+       "date": "$date",
+       "speed": "$speedKMH",
+       "altitude": "${altitude.toFloat}",
+       ${if( eventType != "" ) s""" "geoloc:eventType": "$eventType",""" else "" }
+       ${ preceding match {
+         case Some(rawData) =>
+           s""""precedingPoint": "${rawData.makeURI}""""
+         case _ => ""
+        }
+       }
+      }]
+   }
+   """
   }
 
   def makeURI() = s"point:/imei:$imei/$date"
