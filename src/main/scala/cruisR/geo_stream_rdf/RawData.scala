@@ -46,6 +46,8 @@ case class RawData(
        "date": "$date",
        "speed": "$speedKMH",
        "altitude": "${altitude.toFloat}",
+       "batteryStatus": "$batteryStatus",
+       "chargingStatus": "$chargingStatus",
        ${if( eventType != "" ) s""" "geoloc:eventType": "$eventType",""" else "" }
        ${ preceding match {
          case Some(rawData) =>
