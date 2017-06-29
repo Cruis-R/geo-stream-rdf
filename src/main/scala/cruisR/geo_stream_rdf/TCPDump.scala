@@ -90,15 +90,16 @@ abstract case class ServerThread(socket: Socket)
   val LETTER = """(\w)"""
   val DOT="""\."""
   val BATTERY = """(\w:\d+\.\d+V)""" // “F:4.11V” full battery, “L:3.65V” low battery
-//  val WORD_OR_NOT = """(\w*)"""
-  val WORD_OR_NOT = """(|battery|SHAKE|shake|move|ACC on|ACC OFF|speed|stockade|low batt|Low batt|help)"""
+
+  /** specific messages */
+  val WORD_OR_NOT =
+    """(|battery|SHAKE|shake|move|ACC on|ACC OFF|speed|stockade|low batt|Low batt|help|ACCStart|ACCStop)"""
 
   /**
    * regex getting relevant information from the tcpdump
    * typical input line:
    * 170524170838,+33689162952,GPRMC,160838.000,A,4850.2382,N,00220.0353,E,000.0,000.0,240517,,,A*68,L,, imei:863977030715952,06,76.8,F:4.14V,1,139,4305,208,01,0300,4679
    */
-//    s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,.*""" r
   val regex =
     s"""$INTEGER,$PLUSINTEGER,GPRMC,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$LETTER,$DECIMAL,$DECIMAL,$INTEGER,,,....,$LETTER,$WORD_OR_NOT, imei:$INTEGER,$INTEGER,$DECIMAL,$BATTERY,$INTEGER,(.*)""" r
 

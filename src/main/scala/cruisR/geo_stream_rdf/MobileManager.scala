@@ -13,7 +13,8 @@ trait MobileManager {
       s""",
       {
         "@id": "imei:$imei",
-        "@type": "geoloc:Mobile"
+        "@type": "geoloc:Mobile",
+        "@type": "vehman:SIMCard"
       }"""
     } else ""
   }
