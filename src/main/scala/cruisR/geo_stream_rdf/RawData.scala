@@ -17,7 +17,8 @@ case class RawData(
     val eventType: String,
     val preceding: Option[RawData] = None
     )
-    extends MobileManager {
+//    extends MobileManager
+    {
 
   def toString2() =
     s"IMEI found $imei with timetracked: $timetracked, coords $longitude $latitude, batteryStatus $batteryStatus, speed $speedNauticalMiles"
@@ -56,7 +57,7 @@ case class RawData(
         }
        }
       }
-      ${manageRawDataAddType(this)}
+      ${MobileManager.manageRawDataAddType(this)}
       ]
    }
    """

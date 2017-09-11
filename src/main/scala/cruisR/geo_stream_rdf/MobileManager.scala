@@ -2,7 +2,7 @@ package cruisR.geo_stream_rdf
 
 import scala.collection.mutable
 
-trait MobileManager {
+object MobileManager {
   val imeiSet = mutable.Set[String]()
   
   /** Type declaration for JSON-LD */
